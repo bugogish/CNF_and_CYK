@@ -88,7 +88,7 @@ class CNF_converter:
 
         old_eps_set = set()
         while len(eps_set - old_eps_set) != 0:
-            old_eps_set = eps_set
+            old_eps_set = deepcopy(eps_set)
             for non_terminal in self.rules.keys():
                 for rule in self.rules[non_terminal]:
                     if set(rule).issubset(eps_set):
