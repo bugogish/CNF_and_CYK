@@ -40,15 +40,17 @@ class CNF_converter:
                     self.terminal_rule[self.rules[non_terminal][0][0]] = non_terminal
 
     def print_grammar(self):
-        for rule in self.rules.keys():
-            print(rule, " = ", end=" ")
-            for i in range(len(self.rules[rule])):
-                if len(self.rules[rule][i]) > 1:
-                    for elem in self.rules[rule][i]:
+        for non_terminal in self.rules.keys():
+            print(non_terminal, " = ", end=" ")
+            for i, rule in enumerate(self.rules[non_terminal]):
+                if len(rule) > 1:
+                    for elem in rule:
+                        elem = "'" + elem + "'" if elem in self.terminals else elem
                         print(elem, end=" ")
                 else:
-                    print(self.rules[rule][i][0], end="")
-                if i != len(self.rules[rule]) - 1:
+                    elem = "'" + rule[0] + "'" if rule[0] in self.terminals else rule[0]
+                    print(elem, end="")
+                if i != len(self.rules[non_terminal]) - 1:
                     print(" | ", end="")
             print()
 
@@ -204,6 +206,8 @@ class CNF_converter:
         old_start = self.start
         self.start = self.__get_fresh_non_terminal_name()
         self.rules[self.start] = [[old_start]]
+        if ['eps'] in self.rules[old_start]:
+            self.rules[self.start].append(['eps'])
 
         self.__remove_long_rules()
         self.__remove_eps_rules()

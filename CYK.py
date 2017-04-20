@@ -1,6 +1,30 @@
 import sys
 import csv
 from CNF import CNF_converter
+import pydot
+
+
+class ParseTreeNode:
+    graph = pydot.Dot(graph_type='digraph')
+
+    def __init__(self, left, right, non_terminal, word):
+        self.left = left
+        self.right = right
+        self.nt = non_terminal
+        self.word = word
+
+    def __str__(self):
+        return self.nt + "\n" + self.word
+
+    def create_graph(self):
+        if self.left is not None:
+            edge = pydot.Edge(self.__str__(), str(self.left))
+            ParseTreeNode.graph.add_edge(edge)
+            self.left.create_graph()
+        if self.right is not None:
+            edge = pydot.Edge(self.__str__(), str(self.right))
+            ParseTreeNode.graph.add_edge(edge)
+            self.right.create_graph()
 
 
 def write_to_csv(table, filename):
@@ -11,19 +35,21 @@ def write_to_csv(table, filename):
 
 def CYK(grammar, sequence):
     cnf = CNF_converter(grammar).get_cnf()
+    # cnf.print_grammar()
     non_terminals = list(cnf.non_terminals)
     index = {k: v for v, k in enumerate(non_terminals)}
     with open(sequence) as file:
         seq = file.read()
     n = len(seq)
-    dtable = [[[False for _ in range(len(non_terminals))] for _ in range(n)] for _ in range(n)]
-    out_dtable = [[[] for _ in range(n)] for _ in range(n)]
+    dtable = [[[None for _ in range(len(non_terminals))] for _ in range(n)] for _ in range(n)]
+    csv_dtable = [[[] for _ in range(n)] for _ in range(n)]
 
     for i, symbol in enumerate(seq):
         for a, non_terminal in enumerate(non_terminals):
             if [symbol] in cnf.rules[non_terminal]:
-                dtable[i][i][a] = True
-                out_dtable[i][i].append(non_terminals[a])
+                dtable[i][i][a] = ParseTreeNode(None, None, non_terminals[a], symbol)
+                csv_dtable[i][i].append(non_terminals[a])
+
     for length in range(1, n):
         for i in range(n - length):
             j = i + length
@@ -31,13 +57,23 @@ def CYK(grammar, sequence):
                 for A in cnf.rules.keys():
                     for rule in cnf.rules[A]:
                         if len(rule) == 2:
-                            if dtable[i][k][index[rule[0]]] and dtable[k + 1][j][index[rule[1]]]:
-                                dtable[i][j][index[A]] = True
-                                out_dtable[i][j].append(A)
+                            left = dtable[i][k][index[rule[0]]]
+                            right = dtable[k + 1][j][index[rule[1]]]
+                            if left and right:
+                                dtable[i][j][index[A]] = ParseTreeNode(None, None, A, left.word + right.word)
+                                dtable[i][j][index[A]].left = dtable[i][k][index[rule[0]]]
+                                dtable[i][j][index[A]].right = dtable[k + 1][j][index[rule[1]]]
 
-    write_to_csv(out_dtable, grammar)
+                                csv_dtable[i][j].append(A)
 
-    print(dtable[0][n - 1][index[cnf.start]])
+    write_to_csv(csv_dtable, grammar)
+    root = dtable[0][n - 1][index[cnf.start]]
+    if root is not None:
+        print(True)
+        root.create_graph()
+        ParseTreeNode.graph.write_png(grammar + ".png")
+    else:
+        print(False)
 
 
 def main():
