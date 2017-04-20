@@ -117,11 +117,6 @@ class CNF_converter:
             for rule in self.rules[non_terminal]:
                 if 'eps' in rule and len(rule) == 1 and non_terminal != self.start:
                     self.rules[non_terminal].remove(rule)
-        for rule in self.rules[self.start]:
-            if 'eps' in rule and len(rule) == 1:
-                old_start = self.start
-                self.start = self.__get_fresh_non_terminal_name()
-                self.rules[self.start] = [[old_start], ['eps']]
 
     def __remove_chain_rules(self):
         chain_rule_found = True
@@ -204,9 +199,9 @@ class CNF_converter:
 
     def get_cnf(self):
         old_start = self.start
-        self.start = self.__get_fresh_non_terminal_name()
-        self.rules[self.start] = [[old_start]]
         if ['eps'] in self.rules[old_start]:
+            self.start = self.__get_fresh_non_terminal_name()
+            self.rules[self.start] = [[old_start]]
             self.rules[self.start].append(['eps'])
 
         self.__remove_long_rules()
