@@ -40,6 +40,7 @@ class CNF_converter:
                     self.terminal_rule[self.rules[non_terminal][0][0]] = non_terminal
 
     def print_grammar(self):
+        print(self.start)
         for non_terminal in self.rules.keys():
             print(non_terminal, " = ", end=" ")
             for i, rule in enumerate(self.rules[non_terminal]):
@@ -63,21 +64,21 @@ class CNF_converter:
         return nterminal_name
 
     def __remove_long_rules(self):
-        for non_terminal in list(self.rules.keys()):
-            for i in range(len(self.rules[non_terminal])):
-                if len(self.rules[non_terminal][i]) > 2:
-                    ruleset = self.rules[non_terminal][i]
-                    self.rules[non_terminal].remove(self.rules[non_terminal][i])
-                    new_terminal_count = len(ruleset) - 2
+        old_rules = deepcopy(self.rules)
+        for non_terminal, ruleset in old_rules.items():
+            for rule in ruleset:
+                if len(rule) > 2:
+                    self.rules[non_terminal].remove(rule)
+                    new_terminal_count = len(rule) - 2
 
                     last_nterminal = non_terminal
                     for j in range(new_terminal_count):
                         new_nterminal_name = self.__get_fresh_non_terminal_name()
                         self.rules.setdefault(last_nterminal, [])
-                        self.rules[last_nterminal].append([ruleset[j], new_nterminal_name])
+                        self.rules[last_nterminal].append([rule[j], new_nterminal_name])
                         last_nterminal = new_nterminal_name
                     self.rules.setdefault(last_nterminal, [])
-                    self.rules[last_nterminal].append([ruleset[new_terminal_count], ruleset[new_terminal_count + 1]])
+                    self.rules[last_nterminal].append([rule[new_terminal_count], rule[new_terminal_count + 1]])
 
     def __get_eps_generating_set(self):
         eps_set = set()
