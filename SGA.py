@@ -4,6 +4,7 @@ from copy import deepcopy
 
 from CNF import CNF_converter
 
+
 def read_graph(graph_fname):
     with open(graph_fname) as file:
         n = int(file.readline())
@@ -67,6 +68,7 @@ def main():
             for k in range(len(grammar.non_terminals)):
                 if dtable[i][j][k]:
                     print("({}, {}, {})".format(i, j, grammar.non_terminals[k]))
+
 
 if __name__ == '__main__':
     main()

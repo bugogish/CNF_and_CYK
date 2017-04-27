@@ -4,10 +4,10 @@ import pydot
 
 from SGA import SGA
 
-MIN_NUM_EDGES = 1000
-MAX_NUM_EDGES = 1500
-MIN_N_VERTICES = 100
-MAX_N_VERTICES = 200
+MIN_NUM_EDGES = 30
+MAX_NUM_EDGES = 30
+MIN_N_VERTICES = 10
+MAX_N_VERTICES = 20
 sigma = 'acgt'
 grammar_path = "tRNA"
 
