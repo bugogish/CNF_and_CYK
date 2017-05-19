@@ -39,7 +39,7 @@ def CYK(grammar, sequence):
     non_terminals = list(cnf.non_terminals)
     index = {k: v for v, k in enumerate(non_terminals)}
     with open(sequence) as file:
-        seq = file.read()
+        seq = file.read().rstrip()
     n = len(seq)
     dtable = [[[None for _ in range(len(non_terminals))] for _ in range(n)] for _ in range(n)]
     csv_dtable = [[[] for _ in range(n)] for _ in range(n)]
