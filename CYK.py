@@ -6,23 +6,26 @@ import pydot
 
 class ParseTreeNode:
     graph = pydot.Dot(graph_type='digraph')
+    i = 0
 
     def __init__(self, left, right, non_terminal, word):
         self.left = left
         self.right = right
         self.nt = non_terminal
         self.word = word
+        self.step = ParseTreeNode.i
+        ParseTreeNode.i += 1
 
     def __str__(self):
-        return self.nt + "\n" + self.word
+        return self.nt + "\n" + str(self.step) + ". " + self.word
 
     def create_graph(self):
         if self.left is not None:
-            edge = pydot.Edge(self.__str__(), str(self.left))
+            edge = pydot.Edge(self.__str__(), self.left.__str__())
             ParseTreeNode.graph.add_edge(edge)
             self.left.create_graph()
         if self.right is not None:
-            edge = pydot.Edge(self.__str__(), str(self.right))
+            edge = pydot.Edge(self.__str__(), self.right.__str__())
             ParseTreeNode.graph.add_edge(edge)
             self.right.create_graph()
 
