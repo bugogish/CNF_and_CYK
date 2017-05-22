@@ -14,6 +14,10 @@ class ParseTreeNode:
         self.nt = non_terminal
         self.word = word
         self.step = None
+        self.node = pydot.Node(self.__str__(), label=self.__repr__())
+
+    def __repr__(self):
+        return self.nt + "\n" + self.word
 
     def __str__(self):
         if self.step is None:
@@ -22,12 +26,13 @@ class ParseTreeNode:
         return self.nt + "\n" + str(self.step) + ". " + self.word
 
     def create_graph(self):
+        ParseTreeNode.graph.add_node(self.node)
         if self.left is not None:
-            edge = pydot.Edge(self.__str__(), self.left.__str__())
+            edge = pydot.Edge(self.node, self.left.node)
             ParseTreeNode.graph.add_edge(edge)
             self.left.create_graph()
         if self.right is not None:
-            edge = pydot.Edge(self.__str__(), self.right.__str__())
+            edge = pydot.Edge(self.node, self.right.node)
             ParseTreeNode.graph.add_edge(edge)
             self.right.create_graph()
 
