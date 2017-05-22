@@ -13,10 +13,12 @@ class ParseTreeNode:
         self.right = right
         self.nt = non_terminal
         self.word = word
-        self.step = ParseTreeNode.i
-        ParseTreeNode.i += 1
+        self.step = None
 
     def __str__(self):
+        if self.step is None:
+            self.step = ParseTreeNode.i
+            ParseTreeNode.i += 1
         return self.nt + "\n" + str(self.step) + ". " + self.word
 
     def create_graph(self):
