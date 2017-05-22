@@ -65,10 +65,7 @@ def CYK(grammar, sequence):
                             left = dtable[i][k][index[rule[0]]]
                             right = dtable[k + 1][j][index[rule[1]]]
                             if left and right:
-                                dtable[i][j][index[A]] = ParseTreeNode(None, None, A, left.word + right.word)
-                                dtable[i][j][index[A]].left = dtable[i][k][index[rule[0]]]
-                                dtable[i][j][index[A]].right = dtable[k + 1][j][index[rule[1]]]
-
+                                dtable[i][j][index[A]] = ParseTreeNode(left, right, A, left.word + right.word)
                                 csv_dtable[i][j].append(A)
 
     write_to_csv(csv_dtable, grammar)
